@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Nunito:wght@300;400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh; background: #12041f;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden; position: relative;
+  }
+
+  .bg-glow {
+    position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, #3d1a6e 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 30%, #5c2d91 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, #f5c518 0%, transparent 40%),
+                #12041f;
+    animation: bgShift 8s ease-in-out infinite alternate;
+  }
+  @keyframes bgShift {
+    0%   { filter: hue-rotate(0deg) brightness(1); }
+    100% { filter: hue-rotate(15deg) brightness(1.1); }
+  }
+
+  .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle ease-in-out infinite alternate; }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(0.8); }
+    to   { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  .particle-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .particle { position: absolute; top: -30px; animation: floatUp linear infinite; opacity: 0; }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg) scale(0.7); opacity: 0; }
+    10%  { opacity: 0.8; } 90% { opacity: 0.4; }
+    100% { transform: translateY(110vh) rotate(360deg) scale(1); opacity: 0; }
+  }
+
+  /* Floating Fatma — only 2, very faint */
+  .fname-float {
+    position: fixed; pointer-events: none; z-index: 1;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-weight: 700; user-select: none;
+    animation: driftFloat ease-in-out infinite alternate;
+  }
+  @keyframes driftFloat {
+    0%   { transform: translateY(0) rotate(-3deg); }
+    100% { transform: translateY(-14px) rotate(3deg); }
+  }
+
+  /* Name above card */
+  .name-top {
+    position: relative; z-index: 3; margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 8px;
+    animation: fadeSlideDown 0.8s 0.2s both;
+  }
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .name-top span { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; color: rgba(245,197,24,0.7); letter-spacing: 2px; }
+  .name-top .dot { width: 5px; height: 5px; border-radius: 50%; background: #a855f7; opacity: 0.6; }
+
+  /* Card */
+  .card {
+    position: relative; z-index: 2;
+    background: rgba(30, 8, 55, 0.82);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(245, 197, 24, 0.35);
+    border-radius: 28px;
+    padding: 2.2rem 2.8rem 2.3rem;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(245,197,24,0.12), 0 0 120px rgba(120,40,200,0.2), 0 20px 60px rgba(0,0,0,0.5);
+    max-width: 440px; width: 92%;
+    animation: cardEntry 1s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes cardEntry {
+    from { opacity: 0; transform: translateY(60px) scale(0.8); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 3px;
+    background: linear-gradient(90deg, transparent, #f5c518, #a855f7, #f5c518, transparent);
+    border-radius: 2px;
+  }
+
+  /* Fatma badge */
+  .fatma-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.3);
+    border-radius: 50px; padding: 4px 16px; margin-bottom: 1.2rem;
+    animation: fadeSlideUp 0.6s 0.3s both;
+  }
+  .fatma-badge span { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.88rem; color: #f5c518; letter-spacing: 1.5px; }
+
+  /* GIF */
+  .gif-outer { position: relative; width: 160px; height: 160px; margin: 0 auto 1.4rem; }
+  .orbit { position: absolute; inset: -14px; border-radius: 50%; border: 2px dashed rgba(245,197,24,0.5); animation: spinOrbit 12s linear infinite; }
+  .orbit2 { position: absolute; inset: -24px; border-radius: 50%; border: 1.5px dashed rgba(168,85,247,0.4); animation: spinOrbit 18s linear infinite reverse; }
+  @keyframes spinOrbit { to { transform: rotate(360deg); } }
+  .orbit::after { content: '✦'; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); color: #f5c518; font-size: 10px; }
+  .orbit2::after { content: '✦'; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); color: #a855f7; font-size: 8px; }
+  .pulse-ring { position: absolute; inset: -6px; border-radius: 50%; border: 2.5px solid #f5c518; animation: pulseRing 2.2s ease-out infinite; }
+  @keyframes pulseRing {
+    0%   { transform: scale(0.96); opacity: 0.9; }
+    70%  { transform: scale(1.1); opacity: 0; }
+    100% { opacity: 0; }
+  }
+  .gif-wrap { width: 160px; height: 160px; border-radius: 50%; overflow: hidden; border: 4px solid #f5c518; position: relative; z-index: 1; box-shadow: 0 0 30px rgba(245,197,24,0.4), 0 0 60px rgba(168,85,247,0.3); }
+  .gif-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+  h1 { font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #f5c518; margin-bottom: 0.35rem; text-shadow: 0 0 20px rgba(245,197,24,0.5); animation: fadeSlideUp 0.7s 0.4s both; }
+  h1 .name-hl { color: #c084fc; text-shadow: 0 0 16px rgba(192,132,252,0.6); font-style: italic; }
+  .subtitle { font-size: 0.88rem; color: #c084fc; margin-bottom: 1.8rem; font-style: italic; animation: fadeSlideUp 0.7s 0.55s both; }
+  .subtitle .name-s { color: #f5c518; font-weight: 700; font-style: normal; }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .buttons { position: relative; min-height: 70px; animation: fadeSlideUp 0.7s 0.7s both; }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #f5c518, #e6a800);
+    color: #1a0a2e; border: none; padding: 0.85rem 2.5rem;
+    border-radius: 50px; font-size: 1.05rem;
+    font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(245,197,24,0.5);
+    animation: heartbeat 1.8s ease-in-out 1.5s infinite;
+    position: absolute; left: 50%; transform: translateX(-50%); top: 0; white-space: nowrap;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: translateX(-50%) scale(1); }
+    14%     { transform: translateX(-50%) scale(1.08); }
+    28%     { transform: translateX(-50%) scale(1); }
+    42%     { transform: translateX(-50%) scale(1.05); }
+    70%     { transform: translateX(-50%) scale(1); }
+  }
+  .btn-yes:hover { transform: translateX(-50%) scale(1.12) !important; box-shadow: 0 12px 32px rgba(245,197,24,0.65); animation: none; }
+
+  .btn-no {
+    background: transparent; color: #a855f7; border: 1.5px solid rgba(168,85,247,0.55);
+    padding: 0.85rem 2.2rem; border-radius: 50px; font-size: 1.05rem;
+    font-family: 'Nunito', sans-serif; cursor: pointer;
+    position: absolute; left: calc(50% + 90px); top: 4px;
+    transition: left 0.35s cubic-bezier(0.34,1.56,0.64,1), top 0.35s cubic-bezier(0.34,1.56,0.64,1), font-size 0.3s, opacity 0.4s, padding 0.3s;
+    white-space: nowrap; z-index: 10;
+  }
+
+  /* Yay */
+  .yay { display: none; flex-direction: column; align-items: center; gap: 0.8rem; animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5) rotate(-5deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  .yay-gif { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 4px solid #f5c518; box-shadow: 0 0 30px rgba(245,197,24,0.4); }
+  .yay-gif img { width: 100%; height: 100%; object-fit: cover; }
+  .yay h2 { font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #f5c518; text-shadow: 0 0 20px rgba(245,197,24,0.6); }
+  .yay h2 .name-hl { color: #c084fc; font-style: italic; }
+  .yay p { color: #c084fc; font-size: 0.92rem; }
+
+  /* Subtle timeline in yay */
+  .yay-timeline {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 0.2rem; opacity: 0.65;
+  }
+  .yay-timeline .tlabel {
+    font-size: 0.68rem; color: #c084fc; font-style: italic; line-height: 1.4; text-align: center;
+  }
+  .yay-timeline .tlabel strong { display: block; color: #f5c518; font-style: normal; font-size: 0.75rem; }
+  .yay-timeline .tarrow { color: rgba(245,197,24,0.4); font-size: 0.9rem; }
+
+  .conf { position: fixed; pointer-events: none; z-index: 99; border-radius: 2px; animation: confFall 2.5s ease-in forwards; }
+  @keyframes confFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Footer — one subtle line */
+  .footer {
+    position: relative; z-index: 1; margin-top: 1rem;
+    font-size: 0.7rem; color: rgba(168,85,247,0.4);
+    letter-spacing: 0.5px; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="stars" id="stars"></div>
+<div class="particle-bg" id="particles"></div>
+
+<!-- Only 2 very faint floating names -->
+<div class="fname-float" style="left:3%;top:15%;animation-duration:5.5s;font-size:2.5rem;color:rgba(245,197,24,0.1);">Fatma</div>
+<div class="fname-float" style="right:3%;bottom:18%;animation-duration:7s;animation-delay:1s;font-size:2rem;color:rgba(168,85,247,0.09);">Fatma</div>
+
+<div class="name-top">
+  <div class="dot"></div>
+  <span>for Fatma</span>
+  <div class="dot"></div>
+</div>
+
+<div class="card" id="mainCard">
+
+  <div class="fatma-badge">
+    <span style="font-size:12px;">💛</span>
+    <span>Fatma</span>
+    <span style="font-size:12px;">💜</span>
+  </div>
+
+  <div class="gif-outer">
+    <div class="orbit"></div>
+    <div class="orbit2"></div>
+    <div class="pulse-ring"></div>
+    <div class="gif-wrap">
+      <img src="https://gifdb.com/images/high/milk-and-mocha-love-me-rg6ve4g0z8mip842.gif" alt="cute bear"/>
+    </div>
+  </div>
+
+  <h1>Will you be my girlfriend,<br><span class="name-hl">Fatma</span>? 💛</h1>
+  <p class="subtitle">You're my sunshine and my magic,<br><span class="name-s">Fatma</span> ✨</p>
+
+  <div class="buttons" id="btns">
+    <button class="btn-yes" onclick="sayYes()">Yes! 💛💜</button>
+    <button class="btn-no" id="noBtn" onmouseover="runAway()" onclick="runAway()">No</button>
+  </div>
+
+  <div class="yay" id="yay">
+    <div class="yay-gif">
+      <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="happy bears"/>
+    </div>
+    <h2><span class="name-hl">Fatma</span> said YES! 🎉</h2>
+    <p>You're officially my sunshine & star 🌟</p>
+    <div class="yay-timeline">
+      <div class="tlabel">first talked<strong>10 / 4 / 2026</strong></div>
+      <div class="tarrow">·····›</div>
+      <div class="tlabel">first date<strong>2 / 5 / 2026</strong></div>
+    </div>
+    <p style="font-size:0.8rem; color:#f5c518; opacity:0.8; margin-top:0.1rem;">Now & forever 💛💜</p>
+  </div>
+
+</div>
+
+<!-- Footer: just the two dates, very quiet -->
+<div class="footer">10 / 4 / 2026 &nbsp;·&nbsp; 2 / 5 / 2026</div>
+
+<script>
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = 1 + Math.random() * 3;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.5+Math.random()*3}s;animation-delay:${Math.random()*4}s;`;
+    starsEl.appendChild(s);
+  }
+
+  const pEl = document.getElementById('particles');
+  const psymbols = ['💛','💜','✨','⭐','🌟','💫','🟡','🔮'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div'); p.className = 'particle';
+    p.textContent = psymbols[Math.floor(Math.random()*psymbols.length)];
+    p.style.left = Math.random()*100 + '%';
+    p.style.fontSize = (10+Math.random()*14) + 'px';
+    p.style.animationDuration = (6+Math.random()*8) + 's';
+    p.style.animationDelay = (Math.random()*10) + 's';
+    pEl.appendChild(p);
+  }
+
+  const noPhrases = ["Nope 😅","Nice try…","Catch me!","Still no 🙈","Too slow~","Nuh uh 💨","Not today 😜","Hehe no","Never! 🏃","Ok maybe…","…"];
+  let noCount = 0;
+  function runAway() {
+    const btn = document.getElementById('noBtn');
+    const card = document.getElementById('mainCard');
+    noCount++;
+    const margin = 16;
+    btn.style.left = (margin + Math.random() * (card.offsetWidth  - btn.offsetWidth  - margin*2)) + 'px';
+    btn.style.top  = (margin + Math.random() * (card.offsetHeight - btn.offsetHeight - margin*2)) + 'px';
+    if (noCount <= noPhrases.length) btn.textContent = noPhrases[noCount-1];
+    if (noCount >= 4)  { btn.style.fontSize = '0.78rem'; btn.style.padding = '0.55rem 1.2rem'; }
+    if (noCount >= 7)  { btn.style.fontSize = '0.62rem'; btn.style.padding = '0.4rem 0.9rem'; btn.style.opacity = '0.6'; }
+    if (noCount >= 10) { btn.style.opacity = '0.2'; btn.style.fontSize = '0.5rem'; }
+  }
+
+  function sayYes() {
+    document.getElementById('btns').style.display = 'none';
+    document.getElementById('yay').style.display = 'flex';
+    launchConfetti();
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div'); p.className = 'particle';
+      p.textContent = ['💛','💜','✨','🌟','💫'][Math.floor(Math.random()*5)];
+      p.style.left = Math.random()*100 + '%';
+      p.style.fontSize = (14+Math.random()*16) + 'px';
+      p.style.animationDuration = (2+Math.random()*3) + 's';
+      p.style.animationDelay = Math.random()*0.6 + 's';
+      pEl.appendChild(p);
+    }
+  }
+
+  function launchConfetti() {
+    const colors = ['#f5c518','#a855f7','#c084fc','#e6a800','#7c3aed','#fde68a','#ddd6fe','#fff'];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement('div'); c.className = 'conf';
+      c.style.width  = (4+Math.random()*8) + 'px';
+      c.style.height = (7+Math.random()*10) + 'px';
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.left = (5+Math.random()*90) + 'vw';
+      c.style.top  = (Math.random()*20) + 'vh';
+      c.style.animationDuration = (1.5+Math.random()*2) + 's';
+      c.style.animationDelay   = (Math.random()*0.8) + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+</script>
+</body>
+</html>
